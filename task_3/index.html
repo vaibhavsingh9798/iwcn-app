@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>React App</title>
+  <link rel="stylesheet" href="index.css"/>
+  
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js"></script>
+  <script src="script.js" type="text/babel"></script>
+</head>
+<body>
+  <div id="root"> </div>
+
+  <script type="text/babel">
+
+const { useState,  } = React;
+
+ function App() {
+  const [phoneNumber,setPhoneNumber] = useState('');
+  const [data,setData] = useState();
+
+   const handleClick = async (e) =>{
+      e.preventDefault();
+       
+      try{
+   let response = await   fetch("https://chimpu.xyz/api/post.php",{
+        method:'POST',
+        body : JSON.stringify({phonenumber:phoneNumber}),
+        headers : {'Content-Type' : 'application/json'}
+      })
+      console.log('resp..',response)
+      let data = await response.json()
+      console.log('data..',data)
+       setData(JSON.stringify(data))
+      }catch(err){
+        console.error('error',err)
+      }
+
+      setPhoneNumber('')
+      
+   }
+
+  return ( 
+   <React.Fragment>
+     <div className="container">
+    <h1>Enter Phone Number</h1>
+     <form>
+      <input type="tel" minlength={10} maxlength={10} required value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value) } />
+       <button onClick={handleClick}>Send</button> 
+      </form>
+
+
+  <h1>Response From Server</h1>
+     <h5>  {data && data} </h5>
+   </div>
+  </React.Fragment>
+
+  );
+}
+
+ReactDOM.render(<App />, document.getElementById('root'));
+
+  </script>
+</body>
+</html>
